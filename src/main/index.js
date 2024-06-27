@@ -177,15 +177,24 @@ app.whenReady().then(() => {
       startServer();
       //save the main event to work with it
       ipcMain.on('trigger',(event)=>{
-        console.log("trigger works fine")
+        try {
+          console.log("trigger works fine")
         eventSet=event.sender;
+        } catch (error) {
+          console.error("trigger failed: ",error);
+        }
       })
       ipcMain.on('fire',(event,dataToSend)=>{
-        console.log("fire works fine")
+        try {
+          console.log("fire works fine")
         eventSet.send('fire',dataToSend)
+        } catch (error) {
+          console.error("fire failed: ",error);
+        }
       })
       
-      clearUserData()     
+      try {
+        clearUserData()     
       
       const userData = await loadUserData();
       // console.log("path",dataFilePath)
@@ -199,6 +208,9 @@ app.whenReady().then(() => {
         }
         
         console.log('Loaded user data:', userData);
+      }
+      } catch (error) {
+       console.error("user credentials failed to load/clear up: ",error); 
       }
       
 
@@ -256,73 +268,78 @@ app.whenReady().then(() => {
       // }
       
       //change stream for companies
-      Company.watch().on('change', async(data) => {
-        console.log("changes made: ",data)
-        if(data.operationType=='update'){
-              const getUser=await Employee.findOne({email:ses.getUserAgent()})
-              if(getUser){
-                let companySerialId=getUser.companyId;
-                let getCompany=await Company.findOne({serialId:companySerialId}).lean()
-                let dataToSend={
-                  events:getCompany.events.reverse(),
-                  urgents:getCompany.urgents,
-                  products:getCompany.products.reverse(),
-                  voteSubject:getCompany.vote.subject
-                }
-                let updatedField=data.updateDescription.updatedFields
-                console.log(Object.keys(updatedField)[0])
-
-                if(Object.keys(updatedField)[0].match(/events/g)){
-                  eventSet.send('fire',{events:dataToSend.events})
-                  eventNotification(
-                    dataToSend.events[0].date,
-                    dataToSend.events[0].name,
-                    dataToSend.events[0].place,
-                    dataToSend.events[0].description
-                  )
-                  eventNote.show()
-                  console.log("events...")
-                  console.log(Object.values(updatedField)[0])
-                }else if(Object.keys(updatedField)[0].match(/urgents/g)){
-                  eventSet.send('fire',{urgents:dataToSend.urgents.reverse()})
-                  urgentNotification(dataToSend.urgents[0])
-                  urgentNote.show()
-                  console.log("urgents...")
-                }else if(Object.keys(updatedField)[0].match(/products/g)){
-                  eventSet.send('fire',{products:dataToSend.products})
-                  productNotification(
-                    dataToSend.products[0].name,
-                    dataToSend.products[0].name,
-                    dataToSend.products[0].team
-                  )
-                  productNote.show()
-                  console.log("products...")
-                }else if(Object.keys(updatedField)[0].match(/vote/g)){
-                  eventSet.send('fire',{voteSubject:dataToSend.voteSubject})
-                  voteNotification(
-                    dataToSend.voteSubject
-                  )
-                  voteNote.show()
-                  console.log("vote...")
-                }
-                
-              }   
-        }
-        if(data.ns.coll=='employees'){
-          let getUser=await Employee.findOne({email:ses.getUserAgent()})
-          if(getUser){
-            let voteChoice=getUser.vote
-            eventSet.send('fire',{voteChoice:voteChoice})
+      try {
+        Company.watch().on('change', async(data) => {
+          console.log("changes made: ",data)
+          if(data.operationType=='update'){
+                const getUser=await Employee.findOne({email:ses.getUserAgent()})
+                if(getUser){
+                  let companySerialId=getUser.companyId;
+                  let getCompany=await Company.findOne({serialId:companySerialId}).lean()
+                  let dataToSend={
+                    events:getCompany.events.reverse(),
+                    urgents:getCompany.urgents,
+                    products:getCompany.products.reverse(),
+                    voteSubject:getCompany.vote.subject
+                  }
+                  let updatedField=data.updateDescription.updatedFields
+                  console.log(Object.keys(updatedField)[0])
+  
+                  if(Object.keys(updatedField)[0].match(/events/g)){
+                    eventSet.send('fire',{events:dataToSend.events})
+                    eventNotification(
+                      dataToSend.events[0].date,
+                      dataToSend.events[0].name,
+                      dataToSend.events[0].place,
+                      dataToSend.events[0].description
+                    )
+                    eventNote.show()
+                    console.log("events...")
+                    console.log(Object.values(updatedField)[0])
+                  }else if(Object.keys(updatedField)[0].match(/urgents/g)){
+                    eventSet.send('fire',{urgents:dataToSend.urgents.reverse()})
+                    urgentNotification(dataToSend.urgents[0])
+                    urgentNote.show()
+                    console.log("urgents...")
+                  }else if(Object.keys(updatedField)[0].match(/products/g)){
+                    eventSet.send('fire',{products:dataToSend.products})
+                    productNotification(
+                      dataToSend.products[0].name,
+                      dataToSend.products[0].name,
+                      dataToSend.products[0].team
+                    )
+                    productNote.show()
+                    console.log("products...")
+                  }else if(Object.keys(updatedField)[0].match(/vote/g)){
+                    eventSet.send('fire',{voteSubject:dataToSend.voteSubject})
+                    voteNotification(
+                      dataToSend.voteSubject
+                    )
+                    voteNote.show()
+                    console.log("vote...")
+                  }
+                  
+                }   
           }
-        }
-      });
-      //change stream for emlpoyee
-      Employee.watch().on('change',async(data)=>{
-
-      })
+          if(data.ns.coll=='employees'){
+            let getUser=await Employee.findOne({email:ses.getUserAgent()})
+            if(getUser){
+              let voteChoice=getUser.vote
+              eventSet.send('fire',{voteChoice:voteChoice})
+            }
+          }
+        });
+        //change stream for emlpoyee
+        Employee.watch().on('change',async(data)=>{
+  
+        })
+      } catch (error) {
+        console.error('watch failed: ',error);
+      }
       //listen for image 
       ipcMain.on('save-image', (event, imageData) => {
-        const base64Data = imageData.replace(/^data:image\/png;base64,/, "");
+        try {
+          const base64Data = imageData.replace(/^data:image\/png;base64,/, "");
         const filePath = join(app.getPath('userData'), 'splash.png');
       
         fs.writeFile(filePath, base64Data, 'base64', (err) => {
@@ -334,20 +351,28 @@ app.whenReady().then(() => {
             event.reply('save-image-response', 'success');
           }
         });
+        } catch (error) {
+          console.error("save image failed: ",error);
+        }
       });
       //notification starter
       ipcMain.on('notification-starter',async(event)=>{
-        let rule=await Company.findOne({email:ses.getUserAgent()}).lean()
+        try {
+          let rule=await Company.findOne({email:ses.getUserAgent()}).lean()
         console.log(rule.rules)
         event.sender.send('notification',
         {rule:rule.rules,events:rule.events.reverse(),urgents:rule.urgents.reverse(),
           products:rule.products})
-           
+        
+        } catch (error) {
+        console.error("notification starter :",error);  
+        }   
       })
       
       //notification starter for employee
       ipcMain.on('notification-starter-employee',async(event)=>{
-        const findEmployee=await Employee.findOne({email:ses.getUserAgent()})
+        try {
+          const findEmployee=await Employee.findOne({email:ses.getUserAgent()})
         if(findEmployee){
         const companySerialId=findEmployee.companyId
         console.log("companySerialId: ",companySerialId)
@@ -356,6 +381,9 @@ app.whenReady().then(() => {
         event.sender.send('notification-employee',
         {rule:rule.rules,events:rule.events.reverse(),urgents:rule.urgents.reverse(),
           products:rule.products})
+        }
+        } catch (error) {
+         console.error("notification starter employee failed: ",error); 
         }
       })
       //notification
@@ -420,67 +448,92 @@ app.whenReady().then(() => {
       })
       //login
       ipcMain.on('login',async(event,data)=>{
-        const {userId,password}=data;
-        console.log(data)
-        const loginEmployee=await Employee.findOne({userId:userId,password:password})
-        console.log("loginEmployee: ",loginEmployee)
-        const loginCompany=await Company.findOne({userId:userId,password:password})
-        console.log("loginCompany: ",loginCompany)
-        if(loginEmployee!=null){
-          //store userId inside roaming 
-          saveUserData({ userId: userId,password:password });
-          ses.setUserAgent(loginEmployee.email)
-          const logedInEmployee=await Employee.updateOne({email:ses.getUserAgent()},
-          {$set:{logedIn:true}},{new:true})
-          event.sender.send('login',"employee")
+        try{
+          const {userId,password}=data;
+          console.log(data)
+          const loginEmployee=await Employee.findOne({userId:userId,password:password})
+          console.log("loginEmployee: ",loginEmployee)
+          const loginCompany=await Company.findOne({userId:userId,password:password})
+          console.log("loginCompany: ",loginCompany)
+          if(loginEmployee!=null){
+            //store userId inside roaming 
+            saveUserData({ userId: userId,password:password });
+            ses.setUserAgent(loginEmployee.email)
+            //replace static ip with the ip stored in databse
+            const response = await axios.get('http://192.168.56.1:3031/api');
+            const imageUrl = response.data.imageUrl;
+        
+            const imageResponse = await axios.get(imageUrl, {
+              responseType: 'arraybuffer'  // Get image as an array buffer
+            });
+        
+            // Construct the path to the desktop directory
+            // const desktopPath = join(os.homedir(), 'Desktop');
+            const imageBuffer = Buffer.from(imageResponse.data, 'binary');
+            const imageBase64 = imageBuffer.toString('base64');
+            const imagePath = join(userDataPath, 'downloaded_image.png');
+            console.log(imageBase64)
+        
+            // Write the image buffer to a file on the desktop
+            await fs.writeFile(imagePath, imageResponse.data);
 
-          setTimeout(async() => {
-            mainWindow.hide()
-            const { stdout, stderr } = await execPromise(`${join(__dirname, '../../resources/startChromeExtension.bat')}`)
-          }, 5000);
-         
-          // const interfaces = os.networkInterfaces();
-          //   console.log(interfaces)
-          //   let ipsArray=[]
-          //   Object.values(interfaces).forEach((inFace,i)=>{
-          //           console.log(inFace)
-          //           inFace.forEach((val)=>{
-          //               if (val.family === 'IPv4' && !val.internal) {
-          //                   console.log(val.address)
-          //                   ipsArray.push(val.address)
-          //               }
-          //           })
-          //   })
-          // //change login state
-          // const logedInEmployee=await Employee.updateOne({email:ses.getUserAgent()},
-          // {$set:{logedIn:true},$push:{connectedWithIps:{$each:ipsArray}}},{new:true})
-        console.log("employee loged in",logedInEmployee)
+            const logedInEmployee=await Employee.updateOne({email:ses.getUserAgent()},
+            {$set:{logedIn:true}},{new:true})
+            event.sender.send('login',{direction:"employee",imagePath:`data:image/png;base64,${imageBase64}`})
+
+            setTimeout(async() => {
+              mainWindow.hide()
+              const { stdout, stderr } = await execPromise(`${join(__dirname, '../../resources/startChromeExtension.bat')}`)
+            }, 5000);
           
-          welcomeMessage(userId)
-          message.show()
-          // mainWindow.hide() 
-        }else if(loginCompany!=null){
-          ses.setUserAgent(loginCompany.email)
-          event.sender.send('login',"company")
-          welcomeMessage(userId)
-          message.show()
-        }else{
-          event.sender.send('login',"notFound")
-        }
+            // const interfaces = os.networkInterfaces();
+            //   console.log(interfaces)
+            //   let ipsArray=[]
+            //   Object.values(interfaces).forEach((inFace,i)=>{
+            //           console.log(inFace)
+            //           inFace.forEach((val)=>{
+            //               if (val.family === 'IPv4' && !val.internal) {
+            //                   console.log(val.address)
+            //                   ipsArray.push(val.address)
+            //               }
+            //           })
+            //   })
+            // //change login state
+            // const logedInEmployee=await Employee.updateOne({email:ses.getUserAgent()},
+            // {$set:{logedIn:true},$push:{connectedWithIps:{$each:ipsArray}}},{new:true})
+          console.log("employee loged in",logedInEmployee)
+            
+            welcomeMessage(userId)
+            message.show()
+            // mainWindow.hide() 
+          }else if(loginCompany!=null){
+            ses.setUserAgent(loginCompany.email)
+            event.sender.send('login',"company")
+            welcomeMessage(userId)
+            message.show()
+          }else{
+            event.sender.send('login',"notFound")
+          }
+        }catch(error){console.error("error login: ",error)}
        
       })
       //logout
       ipcMain.on('logout',async(event)=>{
-        console.log("logout is triggred")
+        try {
+          console.log("logout is triggred")
         const logoutUser=await Employee.findOneAndUpdate({email:ses.getUserAgent()},
       {$set:{logedIn:false,connectedWithIps:[]}},{new:true})
       sessionEmail='';
       console.log("loged out state: ",logoutUser)
+        } catch (error) {
+          console.error("logout failed: ",error);
+        }
       
       })
       //signup employye
       ipcMain.on('signup-employee',async(event,data)=>{
-        console.log("sign up employee channel: ",data)
+        try {
+          console.log("sign up employee channel: ",data)
         const {name,userId,password,email,companyId}=data;
         const checkCompanySerialId=await Company.findOne({serialId:companyId})
         console.log("comâny serial id: ",checkCompanySerialId)
@@ -499,10 +552,14 @@ app.whenReady().then(() => {
           event.sender.send('signup-employee',"wrongSerialId")
 
         }
+        } catch (error) {
+         console.error("signup employee: ",error); 
+        }
       })
       //signup company
       ipcMain.on('signup-company',async(event,data)=>{
-        console.log("sign up company channel: ",data)
+        try {
+          console.log("sign up company channel: ",data)
         const {name,email,userId,password}=data;
         let serialId=randomString.generate(6);
         const interfaces = os.networkInterfaces();
@@ -523,26 +580,38 @@ app.whenReady().then(() => {
         {upsert:true})
         console.log("resut for insertion company:",newCompany)
         event.sender.send('signup-company',"created")
+        } catch (error) {
+          console.error("signup company failed: ",error);
+        }
       })
       //rules
       ipcMain.on('rules',async(event)=>{
-        console.log("rules is triggered")
+        try {
+          console.log("rules is triggered")
         const finRules=await Company.findOne({email:ses.getUserAgent()}).lean()
         console.log(finRules.rules)
         event.sender.send('rules',finRules.rules)
+        } catch (error) {
+          console.error("rules trigger failed: ",error);
+        }
       })
       //add rules
       ipcMain.on('add-rules',async(event,data)=>{
-        const {rule}=data
+        try {
+          const {rule}=data
         console.log("new rule receved: ",rule)
         const addRules=await Company.findOneAndUpdate({email:ses.getUserAgent()},
         {$push:{rules:rule}},
         {new:true})
         console.log("added rule: ",addRules)
+        } catch (error) {
+          console.error("add rules failed: ",error);
+        }
       })
       //add event
       ipcMain.on('add-event',async(event,data)=>{
-        console.log("add event triggered")
+        try {
+          console.log("add event triggered")
         const {name,date,description,place}=data
         const newEvent=await Company.findOneAndUpdate({email:ses.getUserAgent()},
         {$push:{events:{name:name,date:date,description:description,place:place}}},
@@ -551,53 +620,68 @@ app.whenReady().then(() => {
         let rule=await Company.findOne({email:ses.getUserAgent()}).lean()
               console.log(rule.rules)
         event.sender.send('notification',{events:rule.events.reverse(),rule:rule.rules})
+        } catch (error) {
+          console.error("add event failed: ",error);
+        }
       })
       //start vote
       ipcMain.on('vote',async(event,data)=>{
-        if(data){
-          const {subject}=data
-        console.log("vote triggered: ",subject)
-        const startVote=await Company.updateOne({email:ses.getUserAgent()},
-          {$set:{vote:{subject:subject,numberOfVotes:0}}})
-        console.log("vote started: ",startVote)
-        event.sender.send('vote',{subject:subject,nbVotes:0,result:'',percentage:0})
-        }else{
-          const checkForVote=await Company.findOne({email:ses.getUserAgent()}).lean()
-          console.log("checked for vote: ",checkForVote)
+        try {
+          if(data){
+            const {subject}=data
+          console.log("vote triggered: ",subject)
+          const startVote=await Company.updateOne({email:ses.getUserAgent()},
+            {$set:{vote:{subject:subject,numberOfVotes:0}}})
+          console.log("vote started: ",startVote)
+          event.sender.send('vote',{subject:subject,nbVotes:0,result:'',percentage:0})
+          }else{
+            const checkForVote=await Company.findOne({email:ses.getUserAgent()}).lean()
+            console.log("checked for vote: ",checkForVote)
+          }
+  
+        } catch (error) {
+          console.error("vote trigger failed: ",error);          
         }
-
       })
       //vote for employee
       ipcMain.on('vote-employee',async(event,data)=>{
-        if(data){
-          const {vote}=data
-          console.log("vote triggered: ",vote)
-          const getUser=await Employee.findOneAndUpdate({email:ses.getUserAgent()},
-        {$set:{vote:vote}},{new:true})
-          if(getUser){
-            let companySerialId=getUser.companyId;
-            let getCompany=await Company.findOneAndUpdate({serialId:companySerialId},
-              {$push:{"vote.result":vote},$inc:{"vote.numberOfVotes":1}},{new:true})
-              event.sender.send('vote-employee',{subject:getCompany.vote.subject,
-                vote:vote})
+        try {
+          if(data){
+            const {vote}=data
+            console.log("vote triggered: ",vote)
+            const getUser=await Employee.findOneAndUpdate({email:ses.getUserAgent()},
+          {$set:{vote:vote}},{new:true})
+            if(getUser){
+              let companySerialId=getUser.companyId;
+              let getCompany=await Company.findOneAndUpdate({serialId:companySerialId},
+                {$push:{"vote.result":vote},$inc:{"vote.numberOfVotes":1}},{new:true})
+                event.sender.send('vote-employee',{subject:getCompany.vote.subject,
+                  vote:vote})
+            }
+          }else{
+            const checkForVote=await Company.findOne({email:ses.getUserAgent()}).lean()
+            console.log("checked for vote: ",checkForVote)
           }
-        }else{
-          const checkForVote=await Company.findOne({email:ses.getUserAgent()}).lean()
-          console.log("checked for vote: ",checkForVote)
+        } catch (error) {
+          console.error("vote employee failed: ",error);
         }
-
       })
       //add urgents
       ipcMain.on('add-urgents',async(event,data)=>{
-        console.log("add urgents is triggered: ",data)
+        try {
+          console.log("add urgents is triggered: ",data)
         const newUrgent=await Company.findOneAndUpdate({email:ses.getUserAgent()},
         {$push:{urgents:data.subject}},{new:true}).lean()
         console.log("new urgent is added: ",newUrgent.urgents)
         event.sender.send('add-urgents',{urgents:newUrgent.urgents.reverse()})
+        } catch (error) {
+          console.error("add urgents failed: ",error);
+        }
       })
       //add products
       ipcMain.on('add-products',async(event,data)=>{
-        console.log("add products triggered",data)
+        try {
+          console.log("add products triggered",data)
         const {name,deadline,team}=data
         const newProduct=await Company.findOneAndUpdate({email:ses.getUserAgent()},
       {$push:{products:{name:name,deadline:deadline,team:team}}},
@@ -605,6 +689,9 @@ app.whenReady().then(() => {
     console.log("newProduct added: ",newProduct)
     event.sender.send('add-products',{products:newProduct.products})
 
+        } catch (error) {
+          console.error("add productsfailed: ",error);          
+        }
       })
       
     }catch(error){

@@ -25,8 +25,8 @@ const Login = () => {
     },[])
     useEffect(()=>{
         window.electron.ipcRenderer.on('login',(event,loginInfo)=>{
-            console.log(loginInfo)
-            loginInfo!="notFound"?navigate(`/${loginInfo}menu`):setMessage(loginInfo)
+            console.log(loginInfo.imagePath)
+            loginInfo!="notFound"?navigate(`/${loginInfo.direction}menu`,{state:{imagePath:loginInfo.imagePath}}):setMessage(loginInfo.direction)
         })
     },[])
     useEffect(()=>{
@@ -36,9 +36,11 @@ const Login = () => {
     return (
         <section className='login'>
         <div className='leftLogin'>
-            {/* <img src={icon} alt="logo NotMe" className='fade-in-image' width={240} />
-            <h1>Teeb3a</h1> */}
-            <BackgroundRemover className="backgroudRemover"/>
+            <img src={icon} alt="logo NotMe" className='fade-in-image' width={240} />
+            <h1>Notification</h1>
+            <h5>On The</h5>
+            <h1>Horizon</h1>
+            {/* <BackgroundRemover className="backgroudRemover"/> */}
         </div>
         <form className='rightLogin' onSubmit={handleSubmit}>
             <input type="text"
@@ -62,7 +64,7 @@ const Login = () => {
             <button type='submit' className='button'>Log in</button>
             <div className='info'>
                 <Link id='info' >Forgot Password</Link>
-                <Link id='info' to='/signupemployee'>Sign Up</Link>
+                {/* <Link id='info' to='/signupemployee'>Sign Up</Link> */}
             </div>
         </form>
         </section>

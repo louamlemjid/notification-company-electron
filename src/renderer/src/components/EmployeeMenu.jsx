@@ -1,6 +1,6 @@
 import profil from '../assets/profil.png'
 import React,{useEffect,useState} from 'react'
-import { useNavigate } from 'react-router-dom'
+import { useNavigate,useLocation } from 'react-router-dom'
 import FormWindow from './FormWindow'
 import UrgentsForm from './UrgentsForm'
 import RulesForm from './RulesForm'
@@ -10,9 +10,11 @@ import settings from '../assets/settings.png'
 import notification from '../assets/notification.png'
 import welcomeImage from '../assets/welcomeImage.jpg'
 import openLogo from '../assets/openLogo.png'
+
 const EmployeeMenu=()=>{
-   
-    const navigate=useNavigate()
+    
+    const navigate=useNavigate();
+    const location=useLocation();
     const weekday = ["Sunday","Monday","Tuesday","Wednesday","Thursday","Friday","Saturday"]
     const [open,setOpen]=useState(true)
     const [formState,setFormState]=useState(true)
@@ -24,6 +26,22 @@ const EmployeeMenu=()=>{
     const dateToString=(date)=>{
         return `${date.getDate()}-${date.getMonth()+1}-${date.getFullYear()}`
     }
+    console.log(location.state.imagePath)
+//   useEffect(() => {
+//     const loadImage = async () => {
+//       try {
+//         // Attempt to dynamically import the image
+//         const image = await import(location.state.imagePath);
+//         setLogo(image.default);
+//       } catch (error) {
+//         // If the image doesn't exist, fall back to the default image
+//         const fallbackImage = await import('../assets/openLogo.png');
+//         setLogo(fallbackImage.default);
+//       }
+//     };
+
+//     loadImage();
+//   }, []);
     useEffect(()=>{
         window.electron.ipcRenderer.send('notification-starter-employee')
         console.log("starter notification is sent") 
@@ -81,11 +99,12 @@ useEffect(()=>{
             setFormState(true)
         })
     },[])
+    // console.log(app.getPath('userData'))
     return(
         <>
         {open?
         <div className='openLogo'>
-            <img src={openLogo} alt="company logo" className='fade-in-image' width={400} />
+            <img src={location.state.imagePath?location.state.imagePath:openLogo} alt="company logo" className='fade-in-image' width={400} />
             {/* <img src={profil} alt="profil" width={30} onClick={handleLogout}/> */}
         </div>:
         <section className="body">

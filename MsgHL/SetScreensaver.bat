@@ -1,4 +1,4 @@
-@echo off
+    @echo off
 :: Set the path to the screensaver within the installation directory
 set "screensaverPath=%localappdata%\MyScreensaver\MyScreenSaver.scr"
 

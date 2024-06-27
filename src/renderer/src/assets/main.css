@@ -7,6 +7,9 @@ body{
   background-image: url('./image.png');
   background-size: 80px;
 }
+img{
+  cursor: pointer;
+}
 .login{
   display: grid;
   grid-template-columns: 1fr 1fr;

@@ -24,6 +24,7 @@ const RulesForm=({isOpen, onClose})=>{
                 <h1>New Rule</h1>
                 <input type="text" name="rule" 
                 value={rulesForm.rule}
+                placeholder="Rule"
                 onChange={handleChange}
                 id="formInput"
                 className="form-control bg-transparent text-dark"/>

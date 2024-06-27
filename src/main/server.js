@@ -54,7 +54,7 @@ function startServer() {
   app.use(cors());
   app.use(bodyParser.urlencoded({extended:true}));
   app.use(bodyParser.json());
-  app.use('/images', express.static(join(__dirname, '../../resources')));
+ 
 
   app.use(express.json());
   var sessionEmail;
@@ -68,7 +68,8 @@ function startServer() {
   }).catch((error)=>console.error(error))
       
         app.post('/login',async(req,res)=>{
-            console.log(req.body)
+            try {
+                console.log(req.body)
             const {userId,password}=req.body;
             
             const loginEmployee=await Employee.findOne({userId:userId,password:password})
@@ -109,11 +110,15 @@ function startServer() {
             }else{
                 res.json({loginInfo:"notFound"});
             }
+            } catch (error) {
+             console.error("login route failed: ",error);   
+            }
             
         })
         //test socket 
         wss.on('connection', function connection(ws, req) {
-            var component=""
+            try {
+                var component=""
             ws.on('error', console.error);
             
             ws.on('message', function message(data) {
@@ -224,10 +229,14 @@ function startServer() {
                     }
                 }
             })
+            } catch (error) {
+              console.error("web socket failed: ",error);  
+            }
           });
         //vote post route
         app.post('/vote',async(req,res)=>{
-            const {vote}=req.body
+            try {
+                const {vote}=req.body
             let subjectVote=''
             console.log("vote route triggered: ",vote)
             const getUser=await Employee.findOne({email:sessionEmail})
@@ -239,10 +248,14 @@ function startServer() {
                 console.log(getCompany)
                 res.json({subject:getCompany.vote.subject,vote:vote});
             }
+            } catch (error) {
+             console.error("vote route failed: ",error);   
+            }
         })
         //check for login 
         app.get('/checkLogin',async(req,res)=>{
-            // const interfaces = os.networkInterfaces();
+            try {
+                // const interfaces = os.networkInterfaces();
             // console.log(interfaces)
             // let ipsArray=[]
             // Object.values(interfaces).forEach((inFace,i)=>{
@@ -270,10 +283,14 @@ function startServer() {
                 }
             };
             
+            } catch (error) {
+                console.error("checkLogin route failed: ",error);    
+            }
         })
         //notification employee
         app.get('/notification-starter-employee',async(req,res)=>{
-            console.log("req.session.email: get ",sessionEmail)
+            try {
+                console.log("req.session.email: get ",sessionEmail)
             const findEmployee=await Employee.findOne({email:sessionEmail})
             console.log("employee found in notification started route: ",findEmployee)
             if(findEmployee){
@@ -283,9 +300,13 @@ function startServer() {
             console.log(rule.rules)
             res.json({rule:rule.rules,events:rule.events.reverse(),urgents:rule.urgents.reverse(),products:rule.products})
             }
+            } catch (error) {
+             console.error("notification starter employee route failed: ",error);   
+            }
         })
         app.get('/events', (req, res) => {
-            res.setHeader('Content-Type', 'application/json');
+            try {
+                res.setHeader('Content-Type', 'application/json');
             res.setHeader('Cache-Control', 'no-cache');
             res.setHeader('Connection', 'keep-alive');
             //change stream for companies
@@ -328,24 +349,10 @@ function startServer() {
               
               res.end();
             });
-          });
-    // Define your API endpoints
-    app.get('/', (req, res) => {
-        res.json({work:"lllllllllllllll"})
-    });
-    
-
-    // company serving image logo on
-    app.get('/api', (req, res) => {
-    // Replace with the actual filename of the image you want to serve
-    const imageName = 'anime.jpg';
-    const imageUrl = `http://192.168.56.1:${PORT}/images/${imageName}`;
-
-    res.json({
-        imageUrl: imageUrl
-    });
-    
-    });
+            } catch (error) {
+               console.error("events route failed: ",error); 
+            }
+          }); 
 
   app.listen(PORT, () => {
     console.log(`Server is running on http://localhost:${PORT}`);
