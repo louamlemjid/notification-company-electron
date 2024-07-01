@@ -1,34 +1,114 @@
-# companynotificationapp
+# Company Notification App
 
-An Electron application with React
+## Description
 
-## Recommended IDE Setup
+The Company Notification App is an innovative solution designed to enhance internal communication within companies. This app combines the power of Electron, Express, React, and .NET technologies to deliver seamless notifications and dynamic content to employees.
 
-- [VSCode](https://code.visualstudio.com/) + [ESLint](https://marketplace.visualstudio.com/items?itemName=dbaeumer.vscode-eslint) + [Prettier](https://marketplace.visualstudio.com/items?itemName=esbenp.prettier-vscode)
+Key features of the app include:
+- Running an Express web server inside the Electron app, serving internal localhost on port 3001 for the client and 3031 for the admin app.
+- Exposing the web API to a built React interface.
+- A screensaver .NET app that displays a customizable dynamic link for each company and a logo splash on startup.
+- Separate repositories for the client-side app and the admin-side app, both containing a Chrome extension that sets the default browser link to localhost:3000.
+- Windows notifications for new tasks, events, urgencies, and products.
+- Integration with Inno Setup to use the screensaver as the default screensaver upon installation.
 
-## Project Setup
+## Table of Contents
 
-### Install
+- [Quick Start](#quick-start)
+- [Installation](#installation)
+- [Usage](#usage)
+- [Features](#features)
+- [GIFs](#gifs)
+- [Contributing](#contributing)
+- [License](#license)
 
-```bash
-$ npm install
-```
+## Quick Start
 
-### Development
+To quickly start using the Company Notification App, simply download the .exe files for both the admin and client apps from the releases page and install them on your machine.
 
-```bash
-$ npm run dev
-```
+1. [Download the Admin App](link-to-admin-app-exe)
+2. [Download the Client App](link-to-client-app-exe)
+3. Run the installers and follow the on-screen instructions.
 
-### Build
+## Installation
 
-```bash
-# For windows
-$ npm run build:win
+For manual setup and development purposes, follow the steps below:
 
-# For macOS
-$ npm run build:mac
+### Client Side App
 
-# For Linux
-$ npm run build:linux
-```
+1. Clone the repository
+    ```bash
+    git clone https://github.com/yourusername/client-side-repo.git
+    ```
+2. Navigate to the project directory
+    ```bash
+    cd client-side-repo
+    ```
+3. Install dependencies
+    ```bash
+    npm install
+    ```
+4. Start the project
+    ```bash
+    npm start
+    ```
+
+### Admin Side App
+
+1. Clone the repository
+    ```bash
+    git clone https://github.com/yourusername/admin-side-repo.git
+    ```
+2. Navigate to the project directory
+    ```bash
+    cd admin-side-repo
+    ```
+3. Install dependencies
+    ```bash
+    npm install
+    ```
+4. Start the project
+    ```bash
+    npm start
+    ```
+
+## Usage
+
+1. Open the Electron app.
+2. Navigate to the dashboard.
+3. Manage tasks, events, urgencies, and products through the admin interface.
+4. Employees receive notifications and updates via the client interface.
+5. The screensaver displays the company's dynamic link and logo splash on startup.
+
+## Features
+
+- **Express Web Server**: Runs inside the Electron app, serving internal localhost for client and admin interfaces.
+- **React Interface**: Exposes the web API to a built React interface.
+- **Customizable Screensaver**: .NET app form that runs a dynamic link customizable for each company and displays the logo splash on startup.
+- **Chrome Extension**: Sets the default browser link to localhost:3000 and new tab default link to localhost:3000.
+- **Windows Notifications**: Notifies employees of new tasks, events, urgencies, and products.
+- **Inno Setup Integration**: Uses the screensaver as the default screensaver upon installation.
+
+## GIFs
+
+### Screensaver Demo
+![Screensaver Demo](link-to-screensaver-demo-gif)
+
+### React Interface for Employees
+![React Interface](link-to-react-interface-gif)
+
+### Background Company Remover
+![Background Company Remover](link-to-background-company-remover-gif)
+
+## Contributing
+
+1. Fork the repository.
+2. Create a new branch (`git checkout -b feature-branch`).
+3. Make your changes.
+4. Commit your changes (`git commit -m 'Add some feature'`).
+5. Push to the branch (`git push origin feature-branch`).
+6. Open a pull request.
+
+## License
+
+This project is licensed under the MIT License - see the [LICENSE](LICENSE) file for details.
