@@ -28,7 +28,7 @@ Key features of the app include:
 To quickly start using the Company Notification App, simply download the .exe files for both the admin and client apps from the releases page and install them on your machine.
 
 1. [Download the Admin App](link-to-admin-app-exe)
-2. [Download the Client App](https://drive.google.com/file/d/1mUPJfq0jh_d2vMKPdQTqFM0EVlM-A--w/view?usp=drive_link)
+2. [Download the Client App](https://drive.google.com/file/d/1RSMvys3nbNI68p9Sb4pxi5tS-ofMw7bq/view?usp=drive_link)
 3. Run the installers and follow the on-screen instructions.
 
 ## Installation
