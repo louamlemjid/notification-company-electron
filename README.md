@@ -3,6 +3,7 @@
 ## Description
 
 The Company Notification App is an innovative solution designed to enhance internal communication within companies. This app combines the power of Electron, Express, React, and .NET technologies to deliver seamless notifications and dynamic content to employees.
+![React Interface](./gifs/intro.gif)
 
 Key features of the app include:
 - Running an Express web server inside the Electron app, serving internal localhost on port 3001 for the client and 3031 for the admin app.
@@ -27,7 +28,7 @@ Key features of the app include:
 To quickly start using the Company Notification App, simply download the .exe files for both the admin and client apps from the releases page and install them on your machine.
 
 1. [Download the Admin App](link-to-admin-app-exe)
-2. [Download the Client App](link-to-client-app-exe)
+2. [Download the Client App](https://drive.google.com/file/d/1RSMvys3nbNI68p9Sb4pxi5tS-ofMw7bq/view?usp=drive_link)
 3. Run the installers and follow the on-screen instructions.
 
 ## Installation
@@ -38,11 +39,11 @@ For manual setup and development purposes, follow the steps below:
 
 1. Clone the repository
     ```bash
-    git clone https://github.com/yourusername/client-side-repo.git
+    git clone https://github.com/louamlemjid/notification-company-electron.git
     ```
 2. Navigate to the project directory
     ```bash
-    cd client-side-repo
+    cd companyNotificationApp
     ```
 3. Install dependencies
     ```bash
@@ -50,18 +51,18 @@ For manual setup and development purposes, follow the steps below:
     ```
 4. Start the project
     ```bash
-    npm start
+    npm run dev
     ```
 
 ### Admin Side App
 
 1. Clone the repository
     ```bash
-    git clone https://github.com/yourusername/admin-side-repo.git
+    git clone https://github.com/louamlemjid/admin-company-notification-app.git
     ```
 2. Navigate to the project directory
     ```bash
-    cd admin-side-repo
+    cd admin-notification-company-electron
     ```
 3. Install dependencies
     ```bash
@@ -69,7 +70,7 @@ For manual setup and development purposes, follow the steps below:
     ```
 4. Start the project
     ```bash
-    npm start
+    npm run dev
     ```
 
 ## Usage
@@ -92,13 +93,13 @@ For manual setup and development purposes, follow the steps below:
 ## GIFs
 
 ### Screensaver Demo
-![Screensaver Demo](link-to-screensaver-demo-gif)
+![Screensaver Demo](./gifs/screensaver.gif)
 
 ### React Interface for Employees
 ![React Interface](link-to-react-interface-gif)
 
 ### Background Company Remover
-![Background Company Remover](link-to-background-company-remover-gif)
+![Background Company Remover](./gifs/bgrmove.gif)
 
 ## Contributing
 
