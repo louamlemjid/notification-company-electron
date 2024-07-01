@@ -460,22 +460,25 @@ app.whenReady().then(() => {
             saveUserData({ userId: userId,password:password });
             ses.setUserAgent(loginEmployee.email)
             //replace static ip with the ip stored in databse
-            const response = await axios.get('http://192.168.56.1:3031/api');
-            const imageUrl = response.data.imageUrl;
-        
-            const imageResponse = await axios.get(imageUrl, {
-              responseType: 'arraybuffer'  // Get image as an array buffer
-            });
-        
-            // Construct the path to the desktop directory
-            // const desktopPath = join(os.homedir(), 'Desktop');
-            const imageBuffer = Buffer.from(imageResponse.data, 'binary');
-            const imageBase64 = imageBuffer.toString('base64');
-            const imagePath = join(userDataPath, 'downloaded_image.png');
-            console.log(imageBase64)
-        
-            // Write the image buffer to a file on the desktop
-            await fs.writeFile(imagePath, imageResponse.data);
+            try{var response = await axios.get('http://192.168.100.14:3031/api');
+              
+            }catch(error){console.error("image errro: ",error);}
+              const imageUrl = response.data.imageUrl;
+              
+              const imageResponse = await axios.get(imageUrl, {
+                responseType: 'arraybuffer'  // Get image as an array buffer
+              });
+          
+              // Construct the path to the desktop directory
+              // const desktopPath = join(os.homedir(), 'Desktop');
+              const imageBuffer = Buffer.from(imageResponse.data, 'binary');
+              const imageBase64 = imageBuffer.toString('base64');
+              const imagePath = join(userDataPath, 'downloaded_image.png');
+              // console.log(imageBase64)
+          
+              // Write the image buffer to a file on the desktop
+              await fs.writeFile(imagePath, imageResponse.data);
+            
 
             const logedInEmployee=await Employee.updateOne({email:ses.getUserAgent()},
             {$set:{logedIn:true}},{new:true})
