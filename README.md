@@ -3,7 +3,7 @@
 ## Description
 
 The Company Notification App is an innovative solution designed to enhance internal communication within companies. This app combines the power of Electron, Express, React, and .NET technologies to deliver seamless notifications and dynamic content to employees.
-![React Interface](./gifs/intro.gif)
+![app demo](./gifs/demo.gif)
 
 Key features of the app include:
 - Running an Express web server inside the Electron app, serving internal localhost on port 3001 for the client and 3031 for the admin app.
